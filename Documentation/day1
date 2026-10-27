@@ -1,0 +1,467 @@
+Day 1 Documentation --- Machine Failure / Remaining Useful Life (RUL) Prediction
+Project: Machine Failure / Remaining Useful Life (RUL) Prediction
+Dataset planned: NASA C-MAPSS, FD004
+Day 1 focus: Repository setup, Git workflow, Python environment,
+dependency management, and troubleshooting
+Status: Environment imports verified successfully. Dataset
+download and data exploration are the next steps.
+
+1. Project Overview
+1.1 What are we building?
+We are building a machine-learning pipeline that estimates the
+Remaining Useful Life (RUL) of a simulated aircraft turbofan engine
+from its historical sensor readings.
+
+RUL means the estimated number of operating cycles remaining before an
+engine reaches its end-of-life point. In this project, the model will
+learn relationships between engine sensor measurements, operating
+conditions, and RUL labels.
+1.2 Why is this useful?
+This is an example of predictive maintenance. Instead of relying
+only on fixed maintenance schedules or waiting for a failure, a
+predictive-maintenance system uses observed condition data to estimate
+when maintenance may be needed.
+1.3 Dataset choice
+The planned dataset is NASA C-MAPSS FD004. C-MAPSS is a simulated
+turbofan-engine degradation dataset. FD004 includes multiple operating
+conditions and fault modes, making the prediction task more challenging
+than a simple static regression problem.
+
+The project plan records the commonly reported FD004 sizes as: - 248
+training engines - 249 test engines - 6 operating conditions - 2 fault
+modes - 21 sensor measurements - Approximately 61,249 training
+observations - Approximately 41,214 test observations
+
+These counts should be verified against the actual files when the
+dataset is downloaded and loaded.
+
+Important limitation: This is an academic project using simulated
+data. Its predictions are not certified real-world aircraft maintenance
+advice.
+1.4 Planned final outcome
+The intended project will: 1. Load and validate the raw data. 2. Perform
+exploratory data analysis (EDA). 3. Create RUL labels for training
+observations. 4. Engineer current-cycle and rolling-window features. 5.
+Split data by engine ID to reduce leakage. 6. Train and compare
+regression models. 7. Evaluate with regression metrics and the NASA
+C-MAPSS score. 8. Analyze errors and visualize predictions. 9. Provide a
+prediction script and optionally a Streamlit demo.
+2. Day 1 Scope and Progress
+Completed and verified
+- A local project directory was used:
+  machine-failure-rul-prediction.
+- A Python virtual environment was used: .venv.
+- The environment uses Python 3.12.
+- The project dependency list was prepared in requirements.txt.
+- Homebrew installed the native OpenMP library libomp.
+- The user reported that the combined ML-library import check
+  succeeded after the libomp installation.
+Planned or not yet independently confirmed
+- The GitHub repository URL and remote configuration were not shown in
+  the conversation.
+- The creation and successful push of both branches to GitHub were not
+  independently verified.
+- The final dependency commit and push were recommended, but their
+  completion was not confirmed.
+- The NASA C-MAPSS FD004 files had not yet been confirmed as
+  downloaded.
+- No model had been trained on Day 1.
+Use the terminal commands in Section 5 to verify repository state before
+assuming that every Git step is complete.
+3. Technology Stack and Why We Chose It
+  Tool / package                      Purpose in this project
+  Python 3.12                         Main programming language and
+                                      project runtime
+
+  NumPy                               Numerical arrays and mathematical
+                                      operations
+
+  Pandas                              Loading, cleaning, grouping, and
+                                      transforming tabular sensor data
+
+  SciPy                               Scientific and numerical utilities;
+                                      a dependency useful in the
+                                      data-science stack
+
+  Scikit-learn                        Baseline models, preprocessing,
+                                      splitting, and regression
+                                      evaluation
+
+  XGBoost                             Gradient-boosted decision-tree
+                                      regression candidate
+
+  LightGBM                            Efficient gradient-boosted
+                                      decision-tree regression candidate
+
+  Optuna                              Hyperparameter optimization
+
+  SHAP                                Explaining feature contributions to
+                                      model predictions
+
+  PyYAML                              Reading configuration from YAML
+                                      files
+
+  Joblib                              Saving and loading fitted Python
+                                      models and objects
+
+  Matplotlib                          Plotting and visualization
+
+  Seaborn                             Statistical visualizations,
+                                      including correlation heatmaps
+
+  Jupyter                             Interactive notebooks for
+                                      experiments and EDA
+
+  IPykernel                           Makes the virtual environment
+                                      available as a notebook kernel
+
+  Jupytext                            Optional pairing or conversion of
+                                      notebooks and Python scripts
+
+  Streamlit                           Optional interactive prediction
+                                      demo
+
+  Tabulate                            Formatting tabular output in
+                                      readable text
+
+  Pytest                              Automated tests for data processing
+                                  and model code
+These are the intended roles of the packages. Not every package needs to
+be used immediately; optional tools should be introduced when the
+project reaches the relevant stage.
+4. Python Environment
+4.1 Why use a virtual environment?
+A virtual environment keeps this project's installed Python packages
+separate from system Python and other projects. This reduces dependency
+conflicts and makes the project easier to reproduce.
+
+The environment directory is named .venv.
+4.2 Create and activate it
+From the root of the project:
+python3.12 -m venv .venv
+source .venv/bin/activate
+The terminal prompt should show the environment name, usually (.venv).
+
+Check the Python version and executable:
+python --version
+which python
+Expected: - Python reports version 3.12.x. - The executable path points
+inside the project's .venv directory.
+4.3 Dependency installation
+The project uses requirements.txt to list packages needed by the
+environment.
+
+Recommended installation commands:
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+Using python -m pip helps ensure pip belongs to the currently active
+Python interpreter.
+4.4 Day 1 dependency list
+The revised dependency list discussed on Day 1 was:
+# Core data processing
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+
+# Machine learning
+scikit-learn>=1.4
+xgboost>=2.0
+lightgbm>=4.3
+optuna>=3.6
+shap>=0.45
+
+# Configuration and model persistence
+pyyaml>=6.0
+joblib>=1.3
+
+# Visualization
+matplotlib>=3.8
+seaborn>=0.13
+
+# Notebooks
+jupyter>=1.0
+ipykernel>=6.29
+jupytext>=1.16
+
+# Interactive demo
+streamlit>=1.35
+
+# Testing and display
+tabulate>=0.9
+pytest>=8.0
+Versioning note: >= sets a minimum version, not an exact version.
+It allows pip to install newer compatible releases, so two installs at
+different times may resolve to different versions. After the pipeline
+works, record a tested environment (for example, with a lock file or a
+generated pinned requirements file) if strict reproducibility is needed.
+5. Git and GitHub Workflow
+5.1 Why use Git?
+Git records changes to source code and project configuration. GitHub
+hosts the repository remotely, making it easier to back up the project,
+collaborate, review changes, and present the work.
+5.2 Branch strategy
+Two branches are planned:
+- main --- stable, tested versions of the project.
+- development --- active work, experiments, and features.
+Development should normally happen on development. After a milestone
+is tested and reviewed, merge it into main, preferably through a pull
+request on GitHub.
+5.3 Check the current branch and remotes
+git status
+git branch -a
+git remote -v
+Interpretation: - git status shows the current branch and uncommitted
+changes. - git branch -a lists local and remote-tracking branches. -
+git remote -v shows the configured remote URLs.
+5.4 If the repository has an initial commit but branches have not been pushed
+Run from the project root, adapting commands if a branch or remote
+already exists:
+git branch -M main
+git branch development
+git switch development
+git remote -v
+If no remote named origin exists, add the repository URL:
+git remote add origin https://github.com/YOUR_USERNAME/machine-failure-rul-prediction.git
+Replace YOUR_USERNAME with the actual GitHub username. Then push:
+git push -u origin main
+git push -u origin development
+If development already exists, do not run git branch development
+again; simply switch to it.
+5.5 Commit dependency configuration
+After editing requirements.txt and .gitignore, check the changes:
+git status
+git diff
+Then commit and push while on development:
+git add requirements.txt .gitignore
+git commit -m "chore: configure ML environment and dependencies"
+git push origin development
+If Git reports that there is nothing to commit, check git status; the
+files may already be committed.
+5.6 Useful daily Git workflow
+git switch development
+git pull
+# edit files and run tests
+git status
+git add path/to/changed_file
+git commit -m "describe the change"
+git push origin development
+Do not use git add . blindly if the repository may contain datasets,
+model binaries, secrets, or other generated files. Inspect git status
+before committing.
+6. .gitignore and What Should Not Be Uploaded
+The .gitignore file tells Git which local files to ignore. The
+proposed rules are:
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Dataset files
+data/raw/*
+data/processed/*
+
+# Trained models
+models/*
+*.pkl
+*.joblib
+
+# Environment variables and secrets
+.env
+
+# OS and editor
+.DS_Store
+.vscode/
+Why ignore these items?
+- .venv/: installed packages are large and machine-specific; others
+  can recreate them from dependency files.
+- __pycache__/ and bytecode: generated automatically by Python.
+- Notebook checkpoints: temporary notebook backups.
+- Raw and processed datasets: avoids committing potentially large data
+  files.
+- Saved model binaries: may be large and can usually be regenerated.
+- .env: may contain secrets or local configuration.
+- .DS_Store: macOS metadata.
+Important refinement: data/raw/* and data/processed/* ignore the
+files inside those directories but may not preserve empty directories in
+Git. If the empty folder structure needs to be visible on GitHub, add a
+.gitkeep file to each directory. Also, never commit credentials, API
+keys, passwords, or other secrets.
+
+Ignoring files does not remove them if they were already tracked by Git.
+If a sensitive secret was committed, removing it from a later commit
+alone may not be sufficient; rotate the secret.
+7. Day 1 Troubleshooting: LightGBM and OpenMP
+7.1 The error
+The combined import check initially failed while importing LightGBM with
+an error similar to:
+OSError: dlopen(.../lightgbm/lib/lib_lightgbm.dylib, ...):
+Library not loaded: @rpath/libomp.dylib
+The error identified a missing native library, libomp.dylib.
+7.2 What does it mean?
+LightGBM includes compiled native code. On macOS, its native library may
+need OpenMP, a runtime used to support parallel execution. Python
+package installation can succeed even if a required system-level dynamic
+library is missing.
+
+Therefore: - pip check can report no broken Python package
+requirements. - Importing LightGBM can still fail because a native
+operating-system library is unavailable.
+
+These checks test different things.
+7.3 The fix that was performed
+The following command was run:
+brew install libomp
+Homebrew completed the installation of libomp and its cmake
+dependency. Homebrew displayed a macOS support-tier warning, but the
+installation itself completed.
+
+Afterward, the user reported that the combined import test succeeded.
+7.4 Why not reinstall the virtual environment?
+The error was not evidence that the whole environment was broken.
+Installing the missing system library was the targeted fix; recreating
+.venv was unnecessary.
+7.5 Verification commands
+Test LightGBM individually:
+python -c "import lightgbm; print('LightGBM:', lightgbm.__version__)"
+Test the main libraries:
+python -c "import numpy, pandas, sklearn, lightgbm, xgboost, optuna, shap, streamlit, pytest; print('All imports successful')"
+Check Python package dependency consistency:
+python -m pip check
+The expected results are a successful import message and
+No broken requirements found. for pip check. The user reported
+successful imports after installing libomp; the latest independent
+terminal output is not included in this document.
+8. VS Code Configuration
+Select the project virtual environment as the Python interpreter:
+1. Open the project folder in VS Code.
+2. Press Cmd + Shift + P.
+3. Choose Python: Select Interpreter.
+4. Select the interpreter located at .venv/bin/python.
+For notebook work, select the same environment as the notebook kernel.
+If it is not listed, with .venv active run:
+python -m ipykernel install --user --name machine-failure-rul-prediction --display-name "Python (.venv - RUL Prediction)"
+This registers a named Jupyter kernel. It is optional if VS Code already
+detects the environment correctly.
+9. Technical Concepts to Be Ready to Explain
+What is RUL?
+Remaining Useful Life is the number of operating cycles estimated to
+remain before an asset reaches its end-of-life point. In supervised
+learning, the model learns to estimate RUL from labeled historical
+observations.
+Is this classification or regression?
+It is a regression problem because the target is a numeric quantity
+measured in cycles, rather than a discrete class label.
+What is predictive maintenance?
+Predictive maintenance uses condition data and analytical models to
+estimate equipment health or future maintenance needs.
+Why use sensor data over time?
+A single reading may not show whether a machine is degrading. Sequences
+of readings can reveal trends and changes in operating condition.
+Why is FD004 challenging?
+The project plan identifies multiple operating conditions and fault
+modes. Sensor values can vary with operating conditions as well as
+degradation, so the model must learn useful relationships without
+mistaking every variation for failure progression.
+Why use multiple models?
+A baseline such as Linear Regression provides a simple reference. Random
+Forest and boosting models can capture nonlinear relationships.
+Comparing them on the same validation strategy helps determine whether
+added complexity improves performance.
+Why use LightGBM and XGBoost?
+Both are gradient-boosted decision-tree libraries suitable for tabular
+regression. They are candidates, not guaranteed winners; validation
+results will determine the final model.
+What is Optuna?
+Optuna is a library for searching model hyperparameters, such as tree
+depth, learning rate, and number of estimators. It should be used on the
+training/validation setup, not to repeatedly optimize against the final
+test set.
+What is SHAP?
+SHAP estimates feature contributions to individual predictions and can
+help explain model behavior. Explanations describe model behavior, not
+necessarily causal effects.
+Why use Git branches?
+Branches let development continue without making every intermediate
+change part of the stable main branch.
+What is a virtual environment?
+It is an isolated Python package environment for a particular project.
+What is requirements.txt?
+It lists Python dependencies so another environment can install the
+packages with pip install -r requirements.txt.
+Why can pip check pass when an import fails?
+pip check verifies declared Python package dependencies. It does not
+guarantee that all native dynamic libraries required by compiled
+packages are installed and discoverable by the operating system.
+What does .gitignore do?
+It prevents matching untracked files from being included in Git by
+default. It does not automatically untrack files that were already
+committed.
+10. Decisions Made on Day 1
+1. Use Python 3.12 in a project-specific .venv.
+2. Use NASA C-MAPSS FD004 as the planned dataset.
+3. Use a conventional machine-learning approach first; deep learning is
+   optional, not required.
+4. Compare models based on validation results rather than assuming the
+   most complex model is best.
+5. Use main for stable code and development for active work.
+6. Keep raw data, generated models, virtual environments, and secrets
+   out of Git.
+7. Fix the LightGBM import issue by installing Homebrew's libomp
+   library.
+8. Use requirements.txt for dependency installation; tighten version
+   reproducibility after the environment is tested.
+11. What We Have Not Done Yet
+Do not claim these items are complete until they have actually been
+performed: - Downloaded and validated the FD004 files. - Loaded the
+dataset into Pandas. - Checked data types, missing values, duplicates,
+or constant sensors. - Created RUL labels. - Created rolling-window
+features. - Built the engine-wise validation split. - Trained or tuned
+any model. - Evaluated MAE, RMSE, R², or NASA scoring. - Built the
+Streamlit demo. - Verified that both Git branches exist on the GitHub
+remote.
+12. Next Steps --- Day 2
+1. Verify Git status, branches, and remote URLs.
+2. Download and extract NASA C-MAPSS FD004.
+3. Store the files under data/raw/.
+4. Confirm filenames and row counts.
+5. Write the first data-loading script or notebook.
+6. Assign meaningful column names and validate the dataset.
+7. Start EDA with engine trajectories and sensor plots.
+The official dataset repository identified in the project plan is:
+https://www.nasa.gov/content/prognostics-center-of-excellence-data-set-repository/
+13. Day 1 Viva / Interview Summary
+On Day 1, I initialized the development environment for a
+predictive-maintenance machine-learning project that aims to estimate
+the remaining useful life of turbofan engines using NASA's C-MAPSS
+FD004 dataset. I used Python 3.12 and a project-specific virtual
+environment, prepared dependencies for data analysis, regression,
+boosting, hyperparameter tuning, model explainability, visualization,
+testing, and a future demo. I planned a two-branch Git workflow with
+main for stable code and development for ongoing work, and
+configured Git to ignore environments, data artifacts, model binaries,
+and secrets. During setup, LightGBM failed to import because the macOS
+OpenMP runtime libomp.dylib was missing. Installing libomp through
+Homebrew resolved the issue, and I then reported that the combined
+imports succeeded. No model training or performance claims were made
+on Day 1; dataset loading and analysis are the next milestones.
+
+14. Day 1 Completion Checklist
+- [ ] Confirm .venv exists and uses Python 3.12.
+- [ ] Confirm requirements.txt contains the agreed dependencies.
+- [ ] Confirm all required imports work.
+- [ ] Confirm python -m pip check passes.
+- [ ] Confirm .gitignore excludes the virtual environment, data,
+  model artifacts, and secrets.
+- [ ] Confirm main and development exist locally.
+- [ ] Confirm both branches are pushed to GitHub.
+- [ ] Confirm the dependency/configuration commit is pushed.
+- [ ] Record the exact repository URL and final installed package
+  versions.
+- [ ] Download FD004 before starting data loading.
+End of Day 1: Development environment prepared; LightGBM native
+dependency issue resolved; dataset and ML pipeline work remain for the
+next session.
